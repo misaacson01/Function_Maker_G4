@@ -40,6 +40,7 @@ for i=1:length(param.section)
         assert(param.high(i)>param.low(i),'function high value must be larger than low value')
     end
     
+    
     range = param.high(i)-param.low(i);
     min = param.low(i);
     s = round(param.dur(i)*1000)/1000; %round to nearest ms
@@ -51,8 +52,8 @@ for i=1:length(param.section)
             tmp = repmat(param.val(i),1,length(timepts));
         case 'sawtooth'
             if strcmp(param.type,'pfn')==1 %for fair rounding
-                range = .9999*param.high(i)-param.low(i)+1;
-                min = param.low(i)-0.5;
+                range = param.high(i)-param.low(i)+0.9999;
+                min = param.low(i)-0.49995;
             end
             tmp = min+range*((sawtooth(timepts*f)+1)/2);
             range = param.high(i)-param.low(i); %reset range and min
