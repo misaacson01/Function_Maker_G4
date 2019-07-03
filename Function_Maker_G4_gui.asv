@@ -905,8 +905,8 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function edit28_Callback(hObject, eventdata, handles)
-% hObject    handle to edit28 (see GCBO)
+function edit25_Callback(hObject, eventdata, handles)
+% hObject    handle to edit25 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -916,7 +916,7 @@ pushbutton2_Callback(hObject, eventdata, handles);
 
 
 % --- Executes during object creation, after setting all properties.
-function edit28_CreateFcn(hObject, eventdata, ~)
+function edit25_CreateFcn(hObject, eventdata, ~)
 % hObject    handle to edit28 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called

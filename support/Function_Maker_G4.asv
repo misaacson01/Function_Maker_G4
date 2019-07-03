@@ -68,7 +68,7 @@ for i=1:length(param.section)
         case 'square'
             tmp = min+range*((square(timepts*f)+1)/2);
         case 'loom'
-            tmp = min-(range/1.5708)*atan(param.size_speed_ratio(i)./(1000*(timepts-s)));
+            tmp = min-(range/1.5708)*atan(param.size_speed_ratio/(1000*(timepts-s)));
         otherwise
             clear tmp
     end
