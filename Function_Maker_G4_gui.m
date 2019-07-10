@@ -1278,15 +1278,10 @@ if ~exist(handles.save_dir,'dir')
     mkdir(handles.save_dir)
 end
 set(handles.text8,'String',handles.save_dir);
-cd(handles.save_dir);
-functionfiles = ls('Function*.mat');
-if isempty(functionfiles)
-    handles.param.ID = 1;
-else
-    handles.param.ID = size(functionfiles,1)+1;
-end
-handles.filename = ['Function_' num2str(handles.param.ID, '%04d') '_G4.mat']; 
-set(handles.text10,'String',handles.filename);
+
+%set function ID
+handles.param.ID = get_function_ID(handles.param.type, handles.save_dir);
+set(handles.text10,'String',['_' num2str(handles.param.ID,'%04d') '.mat']);
 
 guidata(hObject, handles);
 
@@ -1300,19 +1295,9 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 handles.save_dir = uigetdir('', 'Pick a Directory');
 set(handles.text8,'String',handles.save_dir);
 
-%set function name
-if ~exist(handles.save_dir,'dir')
-    mkdir(handles.save_dir)
-end
-cd(handles.save_dir);
-functionfiles = ls('*function*.mat');
-if isempty(functionfiles)
-    handles.ID = 1;
-else
-    handles.ID = size(functionfiles,1)+1;
-end
-handles.filename = ['Function_' num2str(handles.ID, '%04d') '.mat']; 
-set(handles.text10,'String',handles.filename);
+%set function ID
+handles.param.ID = get_function_ID(handles.param.type, handles.save_dir);
+set(handles.text10,'String',['_' num2str(handles.param.ID,'%04d') '.mat']);
 
 guidata(hObject, handles);
 
@@ -1322,6 +1307,8 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.filename = get(handles.edit33,'String');
+
 save_function_G4(handles.func, handles.param, handles.save_dir, handles.filename)
 
 
@@ -1403,7 +1390,7 @@ function pushbutton6_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[handles.filename, handles.save_dir] = uigetfile('Function*.mat');
+[handles.filename, handles.save_dir] = uigetfile('*.mat');
 
 load(fullfile(handles.save_dir,handles.filename));
 set(handles.text8,'String',handles.save_dir);
