@@ -1281,7 +1281,7 @@ set(handles.text8,'String',handles.save_dir);
 
 %set function ID
 handles.param.ID = get_function_ID(handles.param.type, handles.save_dir);
-set(handles.text10,'String',['_' num2str(handles.param.ID,'%04d') '.mat']);
+set(handles.text10,'String',[num2str(handles.param.ID,'%04d') '_']);
 
 guidata(hObject, handles);
 
@@ -1297,7 +1297,7 @@ set(handles.text8,'String',handles.save_dir);
 
 %set function ID
 handles.param.ID = get_function_ID(handles.param.type, handles.save_dir);
-set(handles.text10,'String',['_' num2str(handles.param.ID,'%04d') '.mat']);
+set(handles.text10,'String',[num2str(handles.param.ID,'%04d') '_']);
 
 guidata(hObject, handles);
 
@@ -1394,7 +1394,7 @@ function pushbutton6_Callback(hObject, eventdata, handles)
 
 load(fullfile(handles.save_dir,handles.filename));
 set(handles.text8,'String',handles.save_dir);
-set(handles.text10,'String',handles.filename);
+set(handles.text10,'String',[num2str(handles.param.ID,'%04d') '_']);
 
 if exist('pfnparam','var')
     handles.param = pfnparam;
@@ -1483,4 +1483,4 @@ end
 
 guidata(hObject, handles);
 pushbutton2_Callback(hObject, eventdata, handles);
-set(handles.text10,'String',handles.filename);
+set(handles.text10,'String',[num2str(handles.param.ID,'%04d') '_']);
