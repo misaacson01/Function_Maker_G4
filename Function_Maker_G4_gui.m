@@ -1158,13 +1158,19 @@ set(handles.checkbox10,'enable',vis{6})
 
 if get(handles.popupmenu6, 'Value') == 1
     vis = 'on';
+    set(handles.text21,'visible','off')
 else
     vis = 'off';
+    set(handles.text21,'visible','on')
 end
 set(handles.popupmenu7,'visible',vis)
+set(handles.popupmenu10,'visible',vis)
+set(handles.pushbutton7,'visible',vis)
 set(handles.edit27,'visible',vis)
+set(handles.edit34,'visible',vis)
 set(handles.text12,'visible',vis)
 set(handles.text13,'visible',vis)
+set(handles.text18,'visible',vis)
 
 %clear previous function parameters
 if isfield(handles, 'param')
@@ -1174,6 +1180,7 @@ end
 %get function parameters
 type_strings = {'pfn', 'afn'};
 handles.param.type = type_strings{get(handles.popupmenu6, 'Value')};
+handles.step_size = str2double(get(handles.edit34, 'String'));
 
 popup_strings = get(handles.popupmenu1, 'String');
 handles.param.section{1} = popup_strings{get(handles.popupmenu1, 'Value')};
@@ -1182,6 +1189,10 @@ handles.param.low(1) = str2double(get(handles.edit2, 'String'));
 handles.param.high(1) = str2double(get(handles.edit3, 'String'));
 handles.param.dur(1) = str2double(get(handles.edit4, 'String'));
 handles.param.freq(1) = str2double(get(handles.edit5, 'String'));
+handles.units = get(handles.popupmenu10, 'Value');
+if handles.units==2
+    handles.param.freq(1) = dps2freq(handles.param.freq(1),handles.step_size,handles.param.high(1),handles.param.low(1),handles.param.section{1});
+end
 handles.param.size_speed_ratio(1) = str2double(get(handles.edit28, 'String'));
 handles.param.flip(1) = get(handles.checkbox2, 'Value');
 
@@ -1194,6 +1205,9 @@ if next_section == 1
     handles.param.high(2) = str2double(get(handles.edit8, 'String'));
     handles.param.dur(2) = str2double(get(handles.edit9, 'String'));
     handles.param.freq(2) = str2double(get(handles.edit10, 'String'));
+    if handles.units==2
+        handles.param.freq(2) = dps2freq(handles.param.freq(2),handles.step_size,handles.param.high(2),handles.param.low(2),handles.param.section{2});
+    end
     handles.param.size_speed_ratio(2) = str2double(get(handles.edit29, 'String'));
     handles.param.flip(2) = get(handles.checkbox4, 'Value');
     
@@ -1206,6 +1220,9 @@ if next_section == 1
     handles.param.high(3) = str2double(get(handles.edit13, 'String'));
     handles.param.dur(3) = str2double(get(handles.edit14, 'String'));
     handles.param.freq(3) = str2double(get(handles.edit15, 'String'));
+    if handles.units==2
+        handles.param.freq(3) = dps2freq(handles.param.freq(3),handles.step_size,handles.param.high(3),handles.param.low(3),handles.param.section{3});
+    end
     handles.param.size_speed_ratio(3) = str2double(get(handles.edit30, 'String'));
     handles.param.flip(3) = get(handles.checkbox6, 'Value');
     
@@ -1218,6 +1235,9 @@ if next_section == 1
     handles.param.high(4) = str2double(get(handles.edit18, 'String'));
     handles.param.dur(4) = str2double(get(handles.edit19, 'String'));
     handles.param.freq(4) = str2double(get(handles.edit20, 'String'));
+    if handles.units==2
+        handles.param.freq(4) = dps2freq(handles.param.freq(4),handles.step_size,handles.param.high(4),handles.param.low(4),handles.param.section{4});
+    end
     handles.param.size_speed_ratio(4) = str2double(get(handles.edit31, 'String'));
     handles.param.flip(4) = get(handles.checkbox8, 'Value');
     
@@ -1230,6 +1250,9 @@ if next_section == 1
     handles.param.high(5) = str2double(get(handles.edit23, 'String'));
     handles.param.dur(5) = str2double(get(handles.edit24, 'String'));
     handles.param.freq(5) = str2double(get(handles.edit25, 'String'));
+    if handles.units==2
+        handles.param.freq(5) = dps2freq(handles.param.freq(5),handles.step_size,handles.param.high(5),handles.param.low(5),handles.param.section{5});
+    end
     handles.param.size_speed_ratio(5) = str2double(get(handles.edit32, 'String'));
     handles.param.flip(5) = get(handles.checkbox10, 'Value');
 end
@@ -1320,6 +1343,10 @@ function popupmenu6_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu6 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu6
+if get(hObject,'Value')==2
+    set(handles.popupmenu10, 'Value',1);
+    popupmenu10_Callback(hObject, eventdata, handles)
+end
 pushbutton2_Callback(hObject, eventdata, handles);
 
 
@@ -1362,6 +1389,50 @@ end
 set(hObject, 'String', {'1 bit', '4 bits'});
 
 
+% --- Executes on selection change in popupmenu10.
+function popupmenu10_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu10 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu10
+prev_units = handles.units;
+handles.units = get(handles.popupmenu10,'Value');
+if handles.units ~=prev_units
+    if handles.units==1
+        reverse = 0;
+    else
+        reverse = 1;
+    end
+    popup_strings = get(handles.popupmenu1, 'String');
+    type = popup_strings([get(handles.popupmenu1, 'Value') get(handles.popupmenu2, 'Value') get(handles.popupmenu3, 'Value') get(handles.popupmenu4, 'Value') get(handles.popupmenu5, 'Value')]);
+    low = [str2double(get(handles.edit2, 'String')) str2double(get(handles.edit7, 'String')) str2double(get(handles.edit12, 'String')) str2double(get(handles.edit17, 'String')) str2double(get(handles.edit22, 'String'))];
+    high = [str2double(get(handles.edit3, 'String')) str2double(get(handles.edit8, 'String')) str2double(get(handles.edit13, 'String')) str2double(get(handles.edit18, 'String')) str2double(get(handles.edit23, 'String'))];
+    freq = [str2double(get(handles.edit5, 'String')) str2double(get(handles.edit10, 'String')) str2double(get(handles.edit15, 'String')) str2double(get(handles.edit20, 'String')) str2double(get(handles.edit25, 'String'))];
+    set(handles.edit5, 'String', num2str(dps2freq(freq(1),handles.step_size,high(1),low(1),type{1},reverse)));
+    set(handles.edit10, 'String', num2str(dps2freq(freq(2),handles.step_size,high(2),low(2),type{2},reverse)));
+    set(handles.edit15, 'String', num2str(dps2freq(freq(3),handles.step_size,high(3),low(3),type{3},reverse)));
+    set(handles.edit20, 'String', num2str(dps2freq(freq(4),handles.step_size,high(4),low(4),type{4},reverse)));
+    set(handles.edit25, 'String', num2str(dps2freq(freq(5),handles.step_size,high(5),low(5),type{5},reverse)));
+end
+pushbutton2_Callback(hObject, eventdata, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu10_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+set(hObject, 'String', {'frequency (Hz)', 'deg/sec'});
+
+
 function edit27_Callback(hObject, eventdata, handles)
 % hObject    handle to edit27 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1375,6 +1446,28 @@ pushbutton2_Callback(hObject, eventdata, handles);
 % --- Executes during object creation, after setting all properties.
 function edit27_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit27 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function edit34_Callback(hObject, eventdata, handles)
+% hObject    handle to edit34 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit34 as text
+%        str2double(get(hObject,'String')) returns contents of edit34 as a double
+pushbutton2_Callback(hObject, eventdata, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function edit34_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit34 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1484,3 +1577,22 @@ end
 guidata(hObject, handles);
 pushbutton2_Callback(hObject, eventdata, handles);
 set(handles.text10,'String',[num2str(handles.param.ID,'%04d') '_']);
+
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[filename, pathname] = uigetfile('*.mat', 'Select a pattern file');
+
+try
+    load(fullfile(pathname,filename),'pattern');
+    handles.step_size = rad2deg(pattern.param.true_step_size);
+    set(handles.edit34,'String',num2str(handles.step_size));
+    set(handles.edit27,'String',num2str(pattern.x_num));
+    set(handles.popupmenu7,'Value',round(sqrt(pattern.gs_val)));
+    pushbutton2_Callback(hObject, eventdata, handles);
+catch
+    error('Expected pattern metadata not found in selected file')
+end
